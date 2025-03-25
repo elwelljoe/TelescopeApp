@@ -1,10 +1,11 @@
 {
-  "time": 1742594196,
-  "humidity": 54,
+  "time": 1742911870,
+  "chance_rain": 0,
+  "humidity": 74,
   "wind": {
-    "speed": 4,
-    "direction": 106,
-    "cardinal_direction": "ESE",
-    "gust": 6
+    "speed": 6,
+    "direction": 45,
+    "cardinal_direction": "NE",
+    "gust": 9
   }
 }

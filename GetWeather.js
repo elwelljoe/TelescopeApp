@@ -16,6 +16,7 @@ class GetWeather {
 
             const weatherData = {
                 time: tempestData.current_conditions.time,
+                chance_rain: tempestData.current_conditions.precip_probability,
                 humidity: tempestData.current_conditions.relative_humidity,
                 wind: {
                     speed: tempestData.current_conditions.wind_avg,
@@ -50,9 +51,11 @@ class GetWeather {
                 const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
 
                 console.log(`Current Weather (${time}):`);
+                console.log(`Chance Rain: ${weatherData.chance_rain}%`);
                 console.log(`Humidity: ${weatherData.humidity}%`);
                 console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
                 console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
+                console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
                 console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
             } catch (parseError) {
                 console.error('Error parsing JSON:', parseError);
