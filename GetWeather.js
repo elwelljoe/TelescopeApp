@@ -16,6 +16,8 @@ class GetWeather {
 
             const weatherData = {
                 time: tempestData.current_conditions.time,
+                temperature: tempestData.current_conditions.air_temperature,
+                dew_point: tempestData.current_conditions.dew_point,
                 chance_rain: tempestData.current_conditions.precip_probability,
                 humidity: tempestData.current_conditions.relative_humidity,
                 wind: {
@@ -23,6 +25,10 @@ class GetWeather {
                     direction: tempestData.current_conditions.wind_direction,
                     cardinal_direction: tempestData.current_conditions.wind_direction_cardinal,
                     gust: tempestData.current_conditions.wind_gust
+                },
+                pressure: {
+                    sea_level: tempestData.current_conditions.sea_level_pressure,
+                    trend: tempestData.current_conditions.pressure_trend
                 }
             };
 
@@ -55,7 +61,6 @@ class GetWeather {
                 console.log(`Humidity: ${weatherData.humidity}%`);
                 console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
                 console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
-                console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
                 console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
             } catch (parseError) {
                 console.error('Error parsing JSON:', parseError);
