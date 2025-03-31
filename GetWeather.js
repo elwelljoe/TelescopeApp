@@ -1,12 +1,16 @@
+//This class is used to get Weather Information from a Tempest station and save the needed information
+//and sort out the unnecessary information
+
 const axios = require("axios");
 const fs = require("fs");
 
 class GetWeather {
     constructor(apiKey, stationId) {
-        this.apiKey = apiKey;
-        this.stationId = stationId;
+        this.apiKey = apiKey; //API key of tempest unit
+        this.stationId = stationId; //Station ID of tempest unit
         this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=f&units_wind=mph&units_pressure=mb&units_precip=in&units_distance=mi&api_key=${this.apiKey}`;
         this.headers = { "Accept": "application/json" };
+        this.weatherData;
     }
 
     async fetchData() {
@@ -14,7 +18,8 @@ class GetWeather {
             const tempest = await axios.get(this.apiUrl, { headers: this.headers }); 
             const tempestData = tempest.data;
 
-            const weatherData = {
+            //Sorts out unneccessary data from Tempest Station and saves needed information
+            this.weatherData = {
                 time: tempestData.current_conditions.time,
                 temperature: tempestData.current_conditions.air_temperature,
                 dew_point: tempestData.current_conditions.dew_point,
@@ -32,40 +37,44 @@ class GetWeather {
                 }
             };
 
-            try {
-                fs.writeFileSync("weatherData.json", JSON.stringify(weatherData, null, 2));
-                console.log("Data successfully saved to weatherData.json");
-            } catch (error) {
-                console.error("Error saving data:", error.message);
-            }
+            //Saves data to a JSON file (used to easily see format)
+            fs.writeFileSync("weatherData.json", JSON.stringify(this.weatherData, null, 2));
+            console.log("Weather data updated and saved.");
+
+            //Saves information to the class variable.
+            return this.weatherData;
         } catch (error) {
             console.error("Error fetching API data:", error.message);
         }
     }
 
-    displayData() {
-        fs.readFile('weatherData.json', 'utf8', (err, data) => {
-            if (err) {
-                console.error('Error reading the file:', err);
-                return;
-            }
+    //Returns found data
+    getData(){
+        return this.weatherData;
+    }
 
-            try {
-                const weatherData = JSON.parse(data);
-                const timeStamp = weatherData.time;
-                const date = new Date(timeStamp * 1000);
-                const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
+    //Function used for testing purposes, displays found Weather Data in easy to read format
+    displayData(weatherData = this.weatherData) {
+        //Checks if Data is available
+        if (!weatherData) {
+            console.log("No weather data available.");
+            return;
+        }
 
-                console.log(`Current Weather (${time}):`);
-                console.log(`Chance Rain: ${weatherData.chance_rain}%`);
-                console.log(`Humidity: ${weatherData.humidity}%`);
-                console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
-                console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
-                console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
-            } catch (parseError) {
-                console.error('Error parsing JSON:', parseError);
-            }
-        });
+        //Displays available Data
+        const date = new Date(weatherData.time * 1000);
+        const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
+
+        console.log(`Current Weather (${time}):`);
+        console.log(`Temperature: ${weatherData.temperature} F`);
+        console.log(`Dew Point: ${weatherData.dew_point} F`);
+        console.log(`Chance Rain: ${weatherData.chance_rain}%`);
+        console.log(`Humidity: ${weatherData.humidity}%`);
+        console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
+        console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
+        console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
+        console.log(`Pressure: ${weatherData.pressure.sea_level} mb`);
+        console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
     }
 }
 

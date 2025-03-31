@@ -1,0 +1,223 @@
+[
+  {
+    "time": 1743461440,
+    "temperature": 68,
+    "dew_point": 66,
+    "chance_rain": 95,
+    "humidity": 93,
+    "wind": {
+      "speed": 13,
+      "direction": 23,
+      "cardinal_direction": "NNE",
+      "gust": 16
+    },
+    "pressure": {
+      "sea_level": 1012.1,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461380,
+    "temperature": 68,
+    "dew_point": 66,
+    "chance_rain": 95,
+    "humidity": 93,
+    "wind": {
+      "speed": 11,
+      "direction": 35,
+      "cardinal_direction": "NE",
+      "gust": 16
+    },
+    "pressure": {
+      "sea_level": 1012.1,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461260,
+    "temperature": 69,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 93,
+    "wind": {
+      "speed": 12,
+      "direction": 12,
+      "cardinal_direction": "NNE",
+      "gust": 20
+    },
+    "pressure": {
+      "sea_level": 1012.6,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461201,
+    "temperature": 69,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 93,
+    "wind": {
+      "speed": 16,
+      "direction": 1,
+      "cardinal_direction": "N",
+      "gust": 26
+    },
+    "pressure": {
+      "sea_level": 1012.6,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461141,
+    "temperature": 70,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 93,
+    "wind": {
+      "speed": 14,
+      "direction": 1,
+      "cardinal_direction": "N",
+      "gust": 19
+    },
+    "pressure": {
+      "sea_level": 1012.9,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461081,
+    "temperature": 70,
+    "dew_point": 68,
+    "chance_rain": 90,
+    "humidity": 93,
+    "wind": {
+      "speed": 12,
+      "direction": 354,
+      "cardinal_direction": "N",
+      "gust": 15
+    },
+    "pressure": {
+      "sea_level": 1013,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743461021,
+    "temperature": 70,
+    "dew_point": 68,
+    "chance_rain": 90,
+    "humidity": 92,
+    "wind": {
+      "speed": 11,
+      "direction": 14,
+      "cardinal_direction": "NNE",
+      "gust": 18
+    },
+    "pressure": {
+      "sea_level": 1013.2,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460961,
+    "temperature": 70,
+    "dew_point": 68,
+    "chance_rain": 90,
+    "humidity": 91,
+    "wind": {
+      "speed": 13,
+      "direction": 344,
+      "cardinal_direction": "NNW",
+      "gust": 18
+    },
+    "pressure": {
+      "sea_level": 1013.1,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460901,
+    "temperature": 71,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 90,
+    "wind": {
+      "speed": 14,
+      "direction": 342,
+      "cardinal_direction": "NNW",
+      "gust": 19
+    },
+    "pressure": {
+      "sea_level": 1013.2,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460841,
+    "temperature": 71,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 88,
+    "wind": {
+      "speed": 10,
+      "direction": 356,
+      "cardinal_direction": "N",
+      "gust": 16
+    },
+    "pressure": {
+      "sea_level": 1013.2,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460781,
+    "temperature": 71,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 87,
+    "wind": {
+      "speed": 14,
+      "direction": 358,
+      "cardinal_direction": "N",
+      "gust": 20
+    },
+    "pressure": {
+      "sea_level": 1013,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460721,
+    "temperature": 71,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 87,
+    "wind": {
+      "speed": 11,
+      "direction": 15,
+      "cardinal_direction": "NNE",
+      "gust": 17
+    },
+    "pressure": {
+      "sea_level": 1013,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1743460661,
+    "temperature": 72,
+    "dew_point": 67,
+    "chance_rain": 90,
+    "humidity": 87,
+    "wind": {
+      "speed": 11,
+      "direction": 9,
+      "cardinal_direction": "N",
+      "gust": 15
+    },
+    "pressure": {
+      "sea_level": 1012.5,
+      "trend": "steady"
+    }
+  }
+]

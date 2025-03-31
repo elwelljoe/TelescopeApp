@@ -1,17 +1,17 @@
 {
-  "time": 1743192533,
-  "temperature": 75,
-  "dew_point": 60,
-  "chance_rain": 0,
-  "humidity": 59,
+  "time": 1743461440,
+  "temperature": 68,
+  "dew_point": 66,
+  "chance_rain": 95,
+  "humidity": 93,
   "wind": {
-    "speed": 14,
-    "direction": 143,
-    "cardinal_direction": "SE",
-    "gust": 18
+    "speed": 13,
+    "direction": 23,
+    "cardinal_direction": "NNE",
+    "gust": 16
   },
   "pressure": {
-    "sea_level": 1025.1,
-    "trend": "falling"
+    "sea_level": 1012.1,
+    "trend": "steady"
   }
 }
