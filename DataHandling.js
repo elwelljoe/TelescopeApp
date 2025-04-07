@@ -2,10 +2,16 @@ const fs = require('fs');
 const GetWeather = require('./GetWeather');
 
 class DataHandling{
-    constructor(weather){
+    constructor(weather, maxSize){
         this.weather = weather;
         this.weatherArray = [];
-        this.maxSize = 60; //The number of past data calls to be saved for data analysis purposes.
+        this.maxSize = maxSize; //The number of past data calls to be saved for data analysis purposes.
+        this.initialized = false;
+    }
+
+    //Check to see if the array has been initialized
+    isInitialized(){
+        return this.initialized;
     }
 
     //Initializes the Array with weather data.
@@ -13,6 +19,7 @@ class DataHandling{
         try {
             await this.weather.fetchData();
             this.weatherArray[0] = this.weather.getData();
+            this.initialized = true;
         } 
         catch (error) {
             console.error("Error in fetching or displaying weather data:", error);
@@ -21,6 +28,10 @@ class DataHandling{
 
     //Adds new weather data to the array
     async addArray() {
+        if(this.initialized == false){
+            console.log("Please initialize the Array");
+            return;
+        }
         try {
             const newWeatherData = await this.weather.fetchData();
 
@@ -36,15 +47,24 @@ class DataHandling{
         }
     }
 
-    //Function used for testing purposes, Should only return numbers below maxSize
+    //Should only return numbers below maxSize
     arrayLength(){
         return this.weatherArray.length;
     }
 
+    //Returns the entire Array
+    getArray(){
+        return this.weatherArray;
+    }
+
+    getArrayPos(pos){
+        return this.weatherArray[pos];
+    }
+
     //Function used for testing purposes, Will display the Weather data at the position called
-    dataArray(pos) {
+    stringArray(pos) {
         //Checking to make sure the value does not exceed the number of values in the Array
-        if (pos >= 0 && pos < this.weatherArray.length) {
+        if ((pos >= 0 && pos < this.weatherArray.length) || this.initialized == false) {
             const weatherData = this.weatherArray[pos];
             if (weatherData) {
                 return this.formatWeatherData(weatherData); //Return formatted string
@@ -54,7 +74,7 @@ class DataHandling{
     }
     
     //Function used for testing purposes, formats data in an easy to read format to be
-    //displayed in the console for the dataArray function
+    //displayed in the console for the stringArray function
     formatWeatherData(weatherData) {
         const date = new Date(weatherData.time * 1000);
         const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });

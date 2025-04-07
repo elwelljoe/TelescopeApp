@@ -66,8 +66,8 @@ class GetWeather {
         const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
 
         console.log(`Current Weather (${time}):`);
-        console.log(`Temperature: ${weatherData.temperature} F`);
-        console.log(`Dew Point: ${weatherData.dew_point} F`);
+        console.log(`Temperature: ${weatherData.temperature} °F`);
+        console.log(`Dew Point: ${weatherData.dew_point} °F`);
         console.log(`Chance Rain: ${weatherData.chance_rain}%`);
         console.log(`Humidity: ${weatherData.humidity}%`);
         console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
