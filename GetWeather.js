@@ -21,8 +21,10 @@ class GetWeather {
             //Sorts out unneccessary data from Tempest Station and saves needed information
             this.weatherData = {
                 time: tempestData.current_conditions.time,
-                temperature: tempestData.current_conditions.air_temperature,
-                dew_point: tempestData.current_conditions.dew_point,
+                temperature: {
+                    current: tempestData.current_conditions.air_temperature,
+                    dew_point: tempestData.current_conditions.dew_point,
+                },
                 chance_rain: tempestData.current_conditions.precip_probability,
                 humidity: tempestData.current_conditions.relative_humidity,
                 wind: {
@@ -66,8 +68,8 @@ class GetWeather {
         const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
 
         console.log(`Current Weather (${time}):`);
-        console.log(`Temperature: ${weatherData.temperature} °F`);
-        console.log(`Dew Point: ${weatherData.dew_point} °F`);
+        console.log(`Temperature: ${weatherData.temperature.current} °F`);
+        console.log(`Dew Point: ${weatherData.temperature.dew_point} °F`);
         console.log(`Chance Rain: ${weatherData.chance_rain}%`);
         console.log(`Humidity: ${weatherData.humidity}%`);
         console.log(`Wind Speed: ${weatherData.wind.speed} mph`);

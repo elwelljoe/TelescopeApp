@@ -1,42 +1,61 @@
 const GetWeather = require('./GetWeather');
 const DataHandling = require('./DataHandling');
+const Configure = require('./Configure');
 
 class DataAnalysis{
-    constructor(data, rainYellow, rainRed, humidityYellow, humidityRed, pressureYellow, pressureRed){
+    constructor(data, config){
         if(data.isInitialized()){
             this.data = data;
             this.currentWeather = data.getArrayPos(0);
         }
-        //Range for chance of rain
-        this.rainYellow = rainYellow;
-        this.rainRed = rainRed;
-        //Range for humidity slope
-        this.humidityYellow = humidityYellow;
-        this.humidityRed = humidityRed;
-        //Range for pressure
-        this.pressureYellow = pressureYellow;
-        this.pressureRed = pressureRed;
 
-        this.humiditySlope;
+        //Check if the usability was found
+        this.checked = false;
+        
+        //Gets the config data from the config (Ranges for Yellow and Red, and other settings)
+        this.config = config.getConfig();
 
-        this.usability; //Number value (2, 1, 0)
-        this.usable; //String value (Green, Yellow, Red)
+        this.usability = {
+            humidity: {
+                usability: 0,
+                slope: 0, //slope of humidity over 'n' points (from config)
+                trend: 'unknown' //general trend (increasing is bad)
+            },
+            pressure: {
+                usability: 0,
+                slope: 0, //slope of pressure over 'n' points (from config)
+                trend: 'unknown' //general trend (decreasing is bad)
+            },
+            temperature: {
+                usability: 0,
+                difference: 0 //difference of dew point and temp (small values are bad)
+            },
+            rain: {
+                usability: 0
+            },
+            wind: {
+                usability: 0
+            }
+        }; 
     }
 
     //The slope of the trendline of the humidity data points
     calculateHumiditySlope() {
         //if theres only one datapoint the slope will be zero
         if (this.data.arrayLength() === 1) {
-            this.humiditySlope = 0;
+            this.usability.humidity.slope = 0;
             return;
         }
-    
+        
+        let n = this.config.humidity.n;
         let sumHumidity = 0;   
         let sumTime = 0;
         let numerator = 0;
         let denominator = 0;
-    
-        const n = this.data.arrayLength();
+
+        if(n >= this.data.arrayLength()){
+            n = this.data.arrayLength();
+        }
     
         //Calculating the average of the points
         for (let i = 0; i < n; i++) {
@@ -55,15 +74,49 @@ class DataAnalysis{
             denominator += timeDiff ** 2;
         }
     
-        this.humiditySlope = parseFloat((numerator / denominator).toFixed(4));
+        this.usability.humidity.slope = parseFloat((numerator / denominator).toFixed(4));
     }
 
-    //Returns the humidity slope if available
-    getHumiditySlope(){
-        if(this.humiditySlope==null){
+    //The slope of the trendline of the pressure data points
+    calculatePressureSlope() {
+        //if theres only one datapoint the slope will be zero
+        if (this.data.arrayLength() === 1) {
+            this.usability.pressure.slope = 0;
             return;
         }
-        return this.humiditySlope;
+    
+        let n = this.config.pressure.n;
+        let sumPressure = 0;   
+        let sumTime = 0;
+        let numerator = 0;
+        let denominator = 0;
+
+        if(n >= this.data.arrayLength()){
+            n = this.data.arrayLength();
+        }
+    
+        //Calculating the average of the points
+        for (let i = 0; i < n; i++) {
+            sumPressure += this.data.getArrayPos(i).pressure.sea_level;
+            sumTime += i;
+        }
+        const avgPressure = sumPressure / n;
+        const avgTime = sumTime / n;
+    
+        //Calculating the trendline slope
+        for (let i = 0; i < n; i++) {
+            const timeDiff = i - avgTime;
+            const pressureDiff = this.data.getArrayPos(i).pressure.sea_level - avgPressure;
+    
+            numerator += timeDiff * pressureDiff;
+            denominator += timeDiff ** 2;
+        }
+    
+        this.usability.pressure.slope = parseFloat((numerator / denominator).toFixed(4));
+    }
+
+    calculateTempRange(){
+        this.usability.temperature.difference = Math.abs(this.currentWeather.temperature.current - this.currentWeather.temperature.dew_point);
     }
 
     //Returns the current weather dataset if available
@@ -78,70 +131,92 @@ class DataAnalysis{
     async checkHumidity(){
         await this.calculateHumiditySlope();
 
-        if(this.getHumiditySlope>=this.humidityRed){
-            return 0;
+        if(this.usability.humidity.slope>=this.config.humidity.red){
+            this.usability.humidity.usability = 0;
+            return;
         }
-        if(this.getHumiditySlope>=this.humidityYellow){
-            return 1
+        if(this.usability.humidity.slope>=this.config.humidity.yellow){
+            this.usability.humidity.usability = 1;
+            return;
         }
-        return 2;
-    }
+        this.usability.humidity.usability = 2;
+}
+
+    //Checks if pressure slope is in range of green, yellow, or red
+    async checkPressure(){
+        await this.calculatePressureSlope();
+
+        if(this.usability.pressure.slope<=this.config.pressure.red){
+            this.usability.pressure.usability = 0;
+            return;
+        }
+        if(this.usability.pressure.slope<=this.config.pressure.yellow){
+            this.usability.pressure.usability = 1;
+            return;
+        }
+        this.usability.pressure.usability = 2;
+}
 
     //Checks if chance of rain is in range of green, yellow, or red
     checkRain(){
         const rain = this.currentWeather.chance_rain;
 
-        if(rain>=this.rainRed){
-            return 0;
-        }
-        if(rain>=this.rainYellow){
-            return 1
-        }
-        return 2;        
-    }
-
-    //Checks if pressure is in range of green, yellow, or red
-    checkPressure(){
-        const pressure = this.currentWeather.pressure.sea_level;
-
-        if(pressure>=this.pressureRed){
-            return 0;
-        }
-        if(pressure>=this.pressureYellow){
-            return 1
-        }
-        return 2;
-    }
-
-    //Check the usability of the telescope
-    async checkUsability(){
-        const humidity = this.checkHumidity();
-        const rain = this.checkRain();
-        const pressure = this.checkPressure();
-
-        //Not finished, figure out how to analyze everything accurately given the information
-        this.usability = rain;
-
-        //Assigns the usability to a value green, yellow, or red
-        switch(this.usability){
-            case 0:
-                this.usable = `Red`;
-                return;
-            case 1:
-                this.usable = `Yellow`;
-                return;
-            case 2:
-                this.usable = `Green`;
-                return;
-        }
-    }
-    
-    //Returns green, yellow, or red if usability is available.
-    getUsability(){
-        if(usability == null){
+        if(rain>=this.config.rain.red){
+            this.usability.rain.usability = 0;
             return;
         }
-        return this.usable;
+        if(rain>=this.config.rain.yellow){
+            this.usability.rain.usability =  1;
+            return;
+        }
+        this.usability.rain.usability =  2;        
+    }
+
+    //Checks if wind speed is in range of green, yellow, or red
+    checkWind(){
+        const wind = this.currentWeather.wind.speed;
+
+        if(wind>=this.config.wind.red){
+            this.usability.wind.usability = 0;
+            return;
+        }
+        if(wind>=this.config.wind.yellow){
+            this.usability.wind.usability = 1;
+            return;
+        }
+        this.usability.wind.usability =  2;        
+    }
+
+    //Checks if wind speed is in range of green, yellow, or red
+    async checkTemp(){
+        await this.calculateTempRange();
+
+        if(this.usability.temperature.difference<=this.config.temperature.red){
+            this.usability.temperature.usability = 0;
+            return;
+        }
+        if(this.usability.temperature.difference<=this.config.temperature.yellow){
+            this.usability.temperature.usability = 1;
+            return;
+        }
+        this.usability.temperature.usability =  2;        
+    }
+
+    checkUsability(){
+        this.checkHumidity();
+        this.checkPressure();
+        this.checkRain();
+        this.checkTemp();
+        this.checkWind();
+
+        this.checked == true;
+    }
+
+    async getUsability(){
+        if(!this.checked){
+            await this.checkUsability();
+        }
+        return this.usability;
     }
 }
 

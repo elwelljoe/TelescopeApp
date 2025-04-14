@@ -1,17 +1,26 @@
+const readline = require('readline');
 const GetWeather = require('./GetWeather');
 const DataHandling = require('./DataHandling');
 const DataAnalysis = require('./DataAnalysis');
+const Configure = require('./Configure');
 
 //This uses the College of Aviation Tempest Station
 const weather = new GetWeather('ddeff33f-5d93-4446-b2c1-b22c3b3ad73f', '150341');
 const data = new DataHandling(weather, 60);
-const timeInterval = 60; //Time interval in seconds
-const rainRed = 50;
-const rainYellow = 20;
-const humidityRed = 0.5;
-const humidityYellow = 0.25;
-const pressureRed = 990;
-const pressureYellow = 1000;
+const config = new Configure('config.json')
+const timeInterval = 5;
+
+function askQuestion(query) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans);
+    }));
+}
 
 async function initializeArray(){
     await data.initArray();
@@ -27,7 +36,7 @@ async function updateArray() {
 }
 
 async function setArray(){
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
         if(!(data.isInitialized())){
             await initializeArray();
         }
@@ -38,16 +47,116 @@ async function setArray(){
     }
 }
 
+async function setConfig(){
+    var ans = await askQuestion("Update Config? (y/n): ");
+    if(ans == 'n'){
+        return;
+    }
+
+    let loop = true;
+    while(loop){
+        let type = await askQuestion("Enter type: ");
+        let color = await askQuestion("Enter color: ");
+        let val = await askQuestion("Enter value: ");
+        if (type == 'humidity' || type == 'pressure'){
+            let n = await askQuestion("Enter number: ");
+            config.setConfig(type, color, val, n);
+        }
+        else{
+            config.setConfig(type, color, val);
+        }
+
+        ans = await askQuestion("Continue y/n: ");
+        if(ans == 'y'){
+            loop = true;
+        }
+        else{
+            loop = false;
+        }
+    }
+
+    config.updateConfig();
+}
+
 async function analyze(){
     await setArray();
+    await setConfig();
 
-    const analysis = new DataAnalysis(data, rainYellow, rainRed, humidityYellow, humidityRed, pressureYellow, pressureRed);
+    const analysis = new DataAnalysis(data, config);
 
     await analysis.checkUsability();
-    console.log("Usability: " + analysis.getUsability());
-    console.log("Rain Chance: " + analysis.getCurrentWeather().chance_rain);
-    console.log("Humidity Slope: " + analysis.getHumiditySlope());
-    console.log("Pressure: " + analysis.getCurrentWeather().pressure.sea_level);
+    let usability = (await analysis.getUsability());
+
+    let temp = usability.temperature.usability;
+    let rain = usability.rain.usability;
+    let humid = usability.humidity.usability;
+    let pres = usability.pressure.usability;
+    let wind = usability.wind.usability;
+    var color;
+    switch(temp){
+        case(0):
+        color = "red";
+        break;
+        case(1):
+        color = "yellow";
+        break;
+        case(2):
+        color = "green";
+        break;
+    }
+    console.log("Temp diff: " + usability.temperature.difference + "F ("+ color +")");
+
+    switch(rain){
+        case(0):
+        color = "red";
+        break;
+        case(1):
+        color = "yellow";
+        break;
+        case(2):
+        color = "green";
+        break;
+    }
+    console.log("rain chance: " + analysis.getCurrentWeather().chance_rain + "% ("+ color +")");
+
+    switch(humid){
+        case(0):
+        color = "red";
+        break;
+        case(1):
+        color = "yellow";
+        break;
+        case(2):
+        color = "green";
+        break;
+    }
+    console.log("humidity slope: " + usability.humidity.slope + " ("+ color +")");
+
+    switch(pres){
+        case(0):
+        color = "red";
+        break;
+        case(1):
+        color = "yellow";
+        break;
+        case(2):
+        color = "green";
+        break;
+    }
+    console.log("pressure slope: " + usability.pressure.slope + " ("+ color +")");
+
+    switch(wind){
+        case(0):
+        color = "red";
+        break;
+        case(1):
+        color = "yellow";
+        break;
+        case(2):
+        color = "green";
+        break;
+    }
+    console.log("wind speed: " + analysis.getCurrentWeather().wind.speed + "mph ("+ color +")");
 }
 
 analyze();

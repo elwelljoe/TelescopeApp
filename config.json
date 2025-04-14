@@ -1,0 +1,24 @@
+{
+  "temperature": {
+    "yellow": 5,
+    "red": 2.5
+  },
+  "rain": {
+    "yellow": 20,
+    "red": 10
+  },
+  "humidity": {
+    "n": 10,
+    "yellow": 0.25,
+    "red": 0.5
+  },
+  "wind": {
+    "yellow": 20,
+    "red": 40
+  },
+  "pressure": {
+    "n": 10,
+    "yellow": -0.25,
+    "red": -0.5
+  }
+}
