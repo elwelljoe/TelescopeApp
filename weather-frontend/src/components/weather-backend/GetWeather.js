@@ -8,7 +8,13 @@ class GetWeather {
     constructor(apiKey, stationId) {
         this.apiKey = apiKey; //API key of tempest unit
         this.stationId = stationId; //Station ID of tempest unit
-        this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=f&units_wind=mph&units_pressure=mb&units_precip=in&units_distance=mi&api_key=${this.apiKey}`;
+        this.units = {
+            metric: false,
+            temp: 'f',
+            wind: 'mph',
+            pressure: 'inhg'
+        }
+        this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
         this.headers = { "Accept": "application/json" };
         this.weatherData;
     }
@@ -25,6 +31,7 @@ class GetWeather {
                     current: tempestData.current_conditions.air_temperature,
                     dew_point: tempestData.current_conditions.dew_point,
                 },
+                conditions: tempestData.current_conditions.conditions,
                 chance_rain: tempestData.current_conditions.precip_probability,
                 humidity: tempestData.current_conditions.relative_humidity,
                 wind: {
@@ -67,16 +74,52 @@ class GetWeather {
         const date = new Date(weatherData.time * 1000);
         const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
 
+        if(this.units.metric){
+            console.log(`Current Weather (${time}):`);
+            console.log(`Temperature: ${weatherData.temperature.current} °C`);
+            console.log(`Dew Point: ${weatherData.temperature.dew_point} °C`);
+            console.log(`Dew Point: ${weatherData.conditions}`);
+            console.log(`Chance Rain: ${weatherData.chance_rain}%`);
+            console.log(`Humidity: ${weatherData.humidity}%`);
+            console.log(`Wind Speed: ${weatherData.wind.speed} m/s`);
+            console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
+            console.log(`Wind Gust: ${weatherData.wind.gust} m/s`);
+            console.log(`Pressure: ${weatherData.pressure.sea_level} mb`);
+            console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
+            return;
+        }
+
         console.log(`Current Weather (${time}):`);
         console.log(`Temperature: ${weatherData.temperature.current} °F`);
         console.log(`Dew Point: ${weatherData.temperature.dew_point} °F`);
+        console.log(`Dew Point: ${weatherData.conditions}`);
         console.log(`Chance Rain: ${weatherData.chance_rain}%`);
         console.log(`Humidity: ${weatherData.humidity}%`);
         console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
         console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
         console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
-        console.log(`Pressure: ${weatherData.pressure.sea_level} mb`);
+        console.log(`Pressure: ${weatherData.pressure.sea_level} inHg`);
         console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
+    }
+
+    isMetric(){
+        return this.units.metric;
+    }
+
+    changeUnits(){
+        if(this.units.metric){
+            this.units.temp = 'f';
+            this.units.wind = 'mph';
+            this.units.pressure = 'mmhg';
+            this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
+            this.units.metric = false;
+            return;
+        }
+        this.units.temp = 'c';
+        this.units.wind = 'mps';
+        this.units.pressure = 'mb';
+        this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
+        this.units.metric = true;
     }
 }
 

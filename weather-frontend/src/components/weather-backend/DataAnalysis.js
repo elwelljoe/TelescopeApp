@@ -218,6 +218,10 @@ class DataAnalysis{
         }
         return this.usability;
     }
+
+    changeUnits(){
+        
+    }
 }
 
 module.exports = DataAnalysis;

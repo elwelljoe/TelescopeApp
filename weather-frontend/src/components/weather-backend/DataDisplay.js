@@ -7,6 +7,7 @@ const weather = new GetWeather('ddeff33f-5d93-4446-b2c1-b22c3b3ad73f', '150341')
 
 async function dataDisplay() {
     try {
+        await weather.changeUnits();
         //Takes Data from the API
         await weather.fetchData();
         //Displays Data in console

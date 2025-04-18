@@ -61,6 +61,14 @@ class DataHandling{
         return this.weatherArray[pos];
     }
 
+    changeUnits(){
+        this.weather.changeUnits();
+
+        for(let i = 0; i > this.weatherArray.length; i++){
+            
+        }
+    }
+
     //Function used for testing purposes, Will display the Weather data at the position called
     stringArray(pos) {
         //Checking to make sure the value does not exceed the number of values in the Array
@@ -75,20 +83,43 @@ class DataHandling{
     
     //Function used for testing purposes, formats data in an easy to read format to be
     //displayed in the console for the stringArray function
-    formatWeatherData(weatherData) {
+    displayData(weatherData) {
+        //Checks if Data is available
+        if (!weatherData) {
+            console.log("No weather data available.");
+            return;
+        }
+
+        //Displays available Data
         const date = new Date(weatherData.time * 1000);
         const time = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
-    
-        return `Current Weather (${time}):
-    Temperature: ${weatherData.temperature} F
-    Dew Point: ${weatherData.dew_point} F
-    Chance Rain: ${weatherData.chance_rain}%
-    Humidity: ${weatherData.humidity}%
-    Wind Speed: ${weatherData.wind.speed} mph
-    Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})
-    Wind Gust: ${weatherData.wind.gust} mph
-    Pressure: ${weatherData.pressure.sea_level} mb
-    Pressure Trend: ${weatherData.pressure.trend}`;
+
+        if(this.weather.isMetric()){
+            console.log(`Current Weather (${time}):`);
+            console.log(`Temperature: ${weatherData.temperature.current} °C`);
+            console.log(`Dew Point: ${weatherData.temperature.dew_point} °C`);
+            console.log(`Dew Point: ${weatherData.conditions}`);
+            console.log(`Chance Rain: ${weatherData.chance_rain}%`);
+            console.log(`Humidity: ${weatherData.humidity}%`);
+            console.log(`Wind Speed: ${weatherData.wind.speed} m/s`);
+            console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
+            console.log(`Wind Gust: ${weatherData.wind.gust} m/s`);
+            console.log(`Pressure: ${weatherData.pressure.sea_level} mb`);
+            console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
+            return;
+        }
+
+        console.log(`Current Weather (${time}):`);
+        console.log(`Temperature: ${weatherData.temperature.current} °F`);
+        console.log(`Dew Point: ${weatherData.temperature.dew_point} °F`);
+        console.log(`Dew Point: ${weatherData.conditions}`);
+        console.log(`Chance Rain: ${weatherData.chance_rain}%`);
+        console.log(`Humidity: ${weatherData.humidity}%`);
+        console.log(`Wind Speed: ${weatherData.wind.speed} mph`);
+        console.log(`Wind Direction: ${weatherData.wind.direction}° (${weatherData.wind.cardinal_direction})`);
+        console.log(`Wind Gust: ${weatherData.wind.gust} mph`);
+        console.log(`Pressure: ${weatherData.pressure.sea_level} inHg`);
+        console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
     }
 
     //Exports the array to a JSON file, used for testing purposes to make sure values
