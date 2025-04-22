@@ -1,0 +1,62 @@
+[
+  {
+    "time": 1745285904,
+    "temperature": {
+      "current": 23,
+      "dew_point": 18
+    },
+    "conditions": "Partly Cloudy",
+    "chance_rain": 0,
+    "humidity": 75,
+    "wind": {
+      "speed": 3,
+      "direction": 174,
+      "cardinal_direction": "S",
+      "gust": 6
+    },
+    "pressure": {
+      "sea_level": 1020.4,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1745285904,
+    "temperature": {
+      "current": 23,
+      "dew_point": 18
+    },
+    "conditions": "Partly Cloudy",
+    "chance_rain": 0,
+    "humidity": 75,
+    "wind": {
+      "speed": 3,
+      "direction": 174,
+      "cardinal_direction": "S",
+      "gust": 6
+    },
+    "pressure": {
+      "sea_level": 1020.4,
+      "trend": "steady"
+    }
+  },
+  {
+    "time": 1745285904,
+    "temperature": {
+      "current": 23,
+      "dew_point": 18
+    },
+    "conditions": "Partly Cloudy",
+    "chance_rain": 0,
+    "humidity": 75,
+    "wind": {
+      "speed": 3,
+      "direction": 174,
+      "cardinal_direction": "S",
+      "gust": 6
+    },
+    "pressure": {
+      "sea_level": 1020.4,
+      "trend": "steady"
+    }
+  }
+]

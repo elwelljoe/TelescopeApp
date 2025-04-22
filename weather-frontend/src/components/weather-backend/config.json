@@ -1,7 +1,13 @@
 {
+  "units": {
+    "metric": true,
+    "temp": "c",
+    "wind": "mps",
+    "pressure": "mb"
+  },
   "temperature": {
-    "yellow": 5,
-    "red": 2.5
+    "yellow": 3,
+    "red": 1
   },
   "rain": {
     "yellow": 20,
@@ -13,12 +19,12 @@
     "red": 0.5
   },
   "wind": {
-    "yellow": 20,
-    "red": 40
+    "yellow": 9,
+    "red": 18
   },
   "pressure": {
     "n": 10,
-    "yellow": -0.25,
-    "red": -0.5
+    "yellow": -10.16,
+    "red": -30.14
   }
 }

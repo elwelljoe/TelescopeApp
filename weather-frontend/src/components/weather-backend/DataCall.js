@@ -6,7 +6,7 @@ const DataHandling = require('./DataHandling');
 //This uses the College of Aviation Tempest Station
 const weather = new GetWeather('ddeff33f-5d93-4446-b2c1-b22c3b3ad73f', '150341');
 const data = new DataHandling(weather, 60);
-const timeInterval = 60; //Time interval in seconds
+const timeInterval = 2; //Time interval in seconds
 //NOTE: timeInterval values less than 60 will not be useful, the API only updates information called
 //once per minute, It is only in seconds for testing purposes
 
@@ -29,9 +29,32 @@ async function updateArray() {
     //Prints the first value of the array to the console (Current conditions)
     console.log("Array Length: " + data.arrayLength());
     console.log(data.stringArray(0));
-    console.log();
+    console.log("");
+}
+async function changeUnits() {
+    await data.changeUnits();
+    console.log("Units Changed");
+    await data.exportData();
+    console.log("Array Length: " + data.arrayLength());
+    console.log(data.stringArray(0));
+    console.log("");
 }
 
-initializeArray();
-//Will add a new value to the array every timeInterval seconds
-const intervalId = setInterval(updateArray, timeInterval*1000);
+async function setArray(){
+    for (let i = 0; i < 5; i++) {
+        if(!(data.isInitialized())){
+            await initializeArray();
+        }
+        else{
+            await updateArray(); // Waits for each update to finish
+        }
+        await new Promise(resolve => setTimeout(resolve, timeInterval * 1000)); // Waits before next
+    }
+}
+
+async function run(){
+    await setArray();
+    changeUnits();
+}
+
+run();

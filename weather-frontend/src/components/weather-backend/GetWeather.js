@@ -3,22 +3,25 @@
 
 const axios = require("axios");
 const fs = require("fs");
+const Configure = require('./Configure');
 
 class GetWeather {
-    constructor(apiKey, stationId) {
-        this.apiKey = apiKey; //API key of tempest unit
-        this.stationId = stationId; //Station ID of tempest unit
-        this.units = {
-            metric: false,
-            temp: 'f',
-            wind: 'mph',
-            pressure: 'inhg'
-        }
-        this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
+    constructor(apiKey, stationId, config){
+        this.apiKey = apiKey;
+        this.stationId = stationId;
+        this.config = config;
+        this.units = (config.getConfig()).units;
+        this.apiUrl = this.buildApiUrl();
         this.headers = { "Accept": "application/json" };
-        this.weatherData;
+        this.weatherData = null;
     }
 
+    //Uses config information and station information to create API URL
+    buildApiUrl() {
+        return `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
+    }
+
+    //Takes data from the API URL
     async fetchData() {
         try {
             const tempest = await axios.get(this.apiUrl, { headers: this.headers }); 
@@ -62,7 +65,7 @@ class GetWeather {
         return this.weatherData;
     }
 
-    //Function used for testing purposes, displays found Weather Data in easy to read format
+    //Displays data in console in an easy to read format
     displayData(weatherData = this.weatherData) {
         //Checks if Data is available
         if (!weatherData) {
@@ -102,25 +105,18 @@ class GetWeather {
         console.log(`Pressure Trend: ${weatherData.pressure.trend}`);
     }
 
+    //Checks if the current weather data is in metric units
     isMetric(){
         return this.units.metric;
     }
 
-    changeUnits(){
-        if(this.units.metric){
-            this.units.temp = 'f';
-            this.units.wind = 'mph';
-            this.units.pressure = 'mmhg';
-            this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
-            this.units.metric = false;
-            return;
-        }
-        this.units.temp = 'c';
-        this.units.wind = 'mps';
-        this.units.pressure = 'mb';
-        this.apiUrl = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${this.stationId}&units_temp=${this.units.temp}&units_wind=${this.units.wind}&units_pressure=${this.units.pressure}&api_key=${this.apiKey}`;
-        this.units.metric = true;
-    }
+    //Changes the units from imperial to metric and vice versa
+    async changeUnits() {
+        await this.config.changeUnits();
+        this.units = (this.config.getConfig()).units;
+    
+        this.apiUrl = this.buildApiUrl();
+    }    
 }
 
 module.exports = GetWeather;
