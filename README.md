@@ -1,1 +1,1 @@
-Ignore the serve file
+Ignore the server file
